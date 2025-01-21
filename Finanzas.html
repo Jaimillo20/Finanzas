@@ -1,0 +1,1185 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de Finanzas</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+
+        h1 {
+            color: #2ecc71;
+            text-align: center;
+        }
+
+        button {
+            padding: 10px;
+            background-color: #2ecc71;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #27ae60;
+        }
+
+        .floating-form {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 20px;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            z-index: 999;
+            display: none;
+        }
+
+        .form-container {
+            width: 50%;
+            float: left;
+        }
+
+        .form-container label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        .form-container input, .form-container select {
+            width: calc(100% - 16px);
+            padding: 8px;
+            margin-bottom: 16px;
+            box-sizing: border-box;
+        }
+
+        .form-container .form-actions {
+            text-align: center;
+        }
+
+        .transactions-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            cursor: pointer;
+        }
+
+        .transactions-table th, .transactions-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+    width: 20%; /* Ajusta el ancho según tus necesidades */
+}
+
+        .transactions-table th {
+            background-color: #2ecc71;
+            color: white;
+        }
+
+        .transactions-table th:hover {
+            background-color: #27ae60;
+        }
+
+        .edit-btn, .delete-btn {
+            padding: 6px 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .edit-btn {
+            background-color: #3498db;
+            color: white;
+            margin-right: 5px;
+        }
+
+        .edit-btn:hover {
+            background-color: #2980b9;
+        }
+
+        .delete-btn {
+            background-color: #e74c3c;
+            color: white;
+        }
+
+        .delete-btn:hover {
+            background-color: #c0392b;
+        }
+
+        .total-row {
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>Registro de Finanzas Personales</h1>
+
+    <div class="form-container">
+        <h2></h2>
+        <button onclick="showFloatingForm('Ingreso')">Registrar Ingreso</button>
+
+        <div class="floating-form" id="ingresoForm">
+            <h2>Nuevo Ingreso</h2>
+            <label for="detailIngreso">Detalle:</label>
+            <select id="detailIngreso">
+                <option value="Sueldo">Sueldo</option>
+                <option value="Pension">Pensión</option>
+                <option value="Arriendo">Arriendo</option>
+                <option value="Ventas">Ventas</option>
+                <option value="Devoluciones">Devoluciones</option>
+                <option value="Otros">Otros</option>
+                <!-- Otras opciones de ingreso -->
+            </select>
+
+            <label for="amountIngreso">Monto:</label>
+            <input type="number" id="amountIngreso" placeholder="Ingrese el monto" required>
+
+            <label for="dateIngreso">Fecha:</label>
+            <input type="date" id="dateIngreso" required>
+
+            <label for="observationIngreso">Observación:</label>
+            <textarea id="observationIngreso" placeholder="Ingrese una observación"></textarea>
+
+            <label for="paymentMethodIngreso">Método de Pago:</label>
+            <select id="paymentMethodIngreso">
+                <option value="Efectivo">Efectivo</option>
+                <option value="Tarjeta">Tarjeta</option>
+            </select>
+
+            <div class="form-actions">
+                <button onclick="saveTransaction('Ingreso')">Guardar Ingreso</button>
+                <button onclick="hideFloatingForm('Ingreso')">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-container">
+        <h2></h2>
+        <button onclick="showFloatingForm('Egreso')">Registrar Egreso</button>
+
+        <div class="floating-form" id="egresoForm">
+            <h2>Nuevo Egreso</h2>
+            <label for="detailEgreso">Detalle:</label>
+            <select id="detailEgreso">
+                <option value="Luz">Luz</option>
+                <option value="Agua">Agua</option>
+                <option value="Telefono">Telefono</option>
+                <option value="Universidad">Universidad</option>
+                <option value="TV Cable">TV Cable</option>
+                <option value="Farmacia">Farmacia</option>
+                <option value="Supermercado">Supermercado</option>
+                <option value="Dentista">Dentista</option>
+                <option value="Almacen">Almacen</option>
+                <option value="Otros">Otros</option>
+                <!-- Agregar la opción de Combustible -->
+                <option value="Combustible">Combustible</option>
+                <!-- Otras opciones de egreso -->
+            </select>
+
+            <label for="amountEgreso">Monto:</label>
+            <input type="number" id="amountEgreso" placeholder="Ingrese el monto" required>
+
+            <label for="dateEgreso">Fecha:</label>
+            <input type="date" id="dateEgreso" required>
+
+            <!-- Agregar campo para la observación -->
+            <label for="observationEgreso">Observación:</label>
+            <textarea id="observationEgreso" placeholder="Ingrese una observación"></textarea>
+
+            <label for="paymentMethodEgreso">Método de Pago:</label>
+            <select id="paymentMethodEgreso">
+                <option value="Efectivo">Efectivo</option>
+                <option value="Tarjeta">Tarjeta</option>
+            </select>
+
+            <div class="form-actions">
+                <button onclick="saveTransaction('Egreso')">Guardar Egreso</button>
+                <button onclick="hideFloatingForm('Egreso')">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="transactions">
+        <div id="ingresos" class="transaction-type">
+            <h3>Ingresos</h3>
+            <table class="transactions-table" id="ingresosTable">
+                <thead>
+                        <th>Detalle</th>
+                        <th>Monto</th>
+                        <th>Fecha</th>
+                        <th>Observación</th>
+                        <th>Método de Pago</th> <!-- Nueva columna -->
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="ingresosList" class="transaction-list"></tbody>
+            </table>
+        </div>
+
+        <div id="egresos" class="transaction-type">
+            <h3>Egresos</h3>
+            <table class="transactions-table" id="egresosTable">
+                <thead>
+                        <th>Detalle</th>
+                        <th>Monto</th>
+                        <th>Fecha</th>
+                        <th>Observación</th>
+                        <th>Método de Pago</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="egresosList" class="transaction-list"></tbody>
+            </table>
+        </div>
+   
+    <div class="summary" id="summary">
+        <h2>Resumen Financiero</h2>
+        <table class="transactions-table">
+            <thead>
+                <tr>
+                    <th>Mes</th>
+                    <th>Total Ingresos</th>
+                    <th>Total Ingresos (Efectivo)</th>
+                    <th>Total Ingresos (Tarjeta)</th>
+                    <th>Total Egresos</th>
+                    <th>Total Egresos (Efectivo)</th>
+                    <th>Total Egresos (Tarjeta)</th>
+                    <th>Saldo Mensual (Efectivo)</th>
+                    <th>Saldo Mensual (Tarjeta)</th>
+                    <th>Saldo Mensual</th>
+                </tr>
+            </thead>
+            <tbody id="summary-text"></tbody>
+        </table>
+        <button onclick="clearData()">Limpiar Datos</button>
+    </div>
+
+    <script>
+        function showFloatingForm(type) {
+            var formId = type.toLowerCase() + 'Form';
+            document.getElementById(formId).style.display = 'block';
+        }
+
+        function hideFloatingForm(type) {
+            var formId = type.toLowerCase() + 'Form';
+            document.getElementById(formId).style.display = 'none';
+        }
+
+        function saveTransaction(type) {
+    var detailField = document.getElementById('detail' + type);
+    var amountField = document.getElementById('amount' + type);
+    var dateField = document.getElementById('date' + type);
+    var observationField = document.getElementById('observation' + type);
+    var paymentMethodField = document.getElementById('paymentMethod' + type);
+
+    var detail = detailField.value;
+    var amount = parseFloat(amountField.value);
+    var date = dateField.value;
+    var observation = observationField.value;
+    var paymentMethod = paymentMethodField.value;
+
+    if (isNaN(amount) || date === "") {
+        alert("Por favor, ingrese montos y fechas válidos.");
+        return;
+    }
+
+    // Convertir la fecha seleccionada a formato ISO sin indicar zona horaria (local)
+    var isoDate = new Date(date + 'T00:00:00').toISOString();
+
+    var transaction = {
+        type: type,
+        detail: detail,
+        amount: amount,
+        date: isoDate,
+        observation: observation,
+        paymentMethod: paymentMethod
+    };
+
+    var transactions = JSON.parse(localStorage.getItem('transactions')) || [];
+    transactions.push(transaction);
+
+    // Ordenar transacciones por fecha en orden descendente
+    transactions = sortTransactions(transactions);
+
+    localStorage.setItem('transactions', JSON.stringify(transactions));
+
+    // Limpiar campos y ocultar el formulario
+    detailField.value = '';
+    amountField.value = '';
+    dateField.value = '';
+    observationField.value = '';
+    paymentMethodField.value = '';
+    hideFloatingForm(type);
+
+    // Mostrar las transacciones actualizadas y el balance
+    displayTransactions();
+    displaySummary();
+}
+function displayTransactions() {
+            var transactions = JSON.parse(localStorage.getItem('transactions')) || [];
+            var ingresosTable = document.getElementById('ingresosTable');
+            var egresosTable = document.getElementById('egresosTable');
+
+            ingresosTable.innerHTML = '<thead><tr onclick="toggleTable(\'ingresos\')"><th>Detalle</th><th>Monto</th><th>Fecha</th><th>Observación</th><th>Método de Pago</th><th>Acciones</th></tr></thead><tbody id="ingresosList" class="transaction-list"></tbody>';
+            egresosTable.innerHTML = '<thead><tr onclick="toggleTable(\'Egresos\')"><th>Detalle</th><th>Monto</th><th>Fecha</th><th>Observación</th><th>Método de Pago</th><th>Acciones</th></tr></thead><tbody id="egresosList" class="transaction-list"></tbody>';
+
+            var ingresosList = document.getElementById('ingresosList');
+            var egresosList = document.getElementById('egresosList');
+
+            transactions.forEach(function (transaction, index) {
+                var transactionItem = document.createElement('tr');
+                transactionItem.className = 'transaction-item';
+                transactionItem.innerHTML = `<td>${transaction.detail}</td>
+                                    <td>${formatNumber(transaction.amount)}</td>
+                                    <td>${formatDate(transaction.date)}</td>
+                                    <td>${transaction.observation || ''}</td>
+                                    <td>${transaction.paymentMethod || ''}</td>
+                                    <td>
+                                        <button class="edit-btn" onclick="editTransaction(${index}, '${transaction.type}')">Editar</button>
+                                        <button class="delete-btn" onclick="deleteTransaction(${index})">Eliminar</button>
+                                    </td>`;
+
+                if (transaction.type === 'Ingreso') {
+                    ingresosList.appendChild(transactionItem);
+                } else {
+                    egresosList.appendChild(transactionItem);
+                }
+            });
+        }
+
+// ... (código posterior)
+
+function toggleEgresosTable() {
+        var list = document.getElementById('egresosList');
+        if (list.style.display === 'none' || list.style.display === '') {
+            list.style.display = 'table-row-group';
+        } else {
+            list.style.display = 'none';
+        }
+    }
+
+        function formatDate(dateString) {
+            var options = { year: 'numeric', month: 'long', day: 'numeric' };
+            return new Date(dateString).toLocaleDateString('es-CO', options);
+        }
+
+        function editTransaction(index, type) {
+            var transactions = JSON.parse(localStorage.getItem('transactions')) || [];
+            var transactionToEdit = transactions[index];
+
+            // Rellenar el formulario de edición con los detalles actuales
+            document.getElementById('detail' + type).value = transactionToEdit.detail;
+            document.getElementById('amount' + type).value = transactionToEdit.amount;
+            document.getElementById('date' + type).value = transactionToEdit.date;
+
+            // Mostrar el formulario de edición
+            showFloatingForm(type);
+
+            // Eliminar la transacción original
+            transactions.splice(index, 1);
+            localStorage.setItem('transactions', JSON.stringify(transactions));
+
+            // Mostrar las transacciones actualizadas y el balance
+            displayTransactions();
+            displaySummary();
+        }
+
+        function deleteTransaction(index) {
+            var transactions = JSON.parse(localStorage.getItem('transactions')) || [];
+
+            // Eliminar la transacción
+            transactions.splice(index, 1);
+            localStorage.setItem('transactions', JSON.stringify(transactions));
+
+            // Mostrar las transacciones actualizadas y el balance
+            displayTransactions();
+            displaySummary();
+        }
+
+        function displaySummary() {
+    var transactions = JSON.parse(localStorage.getItem('transactions')) || [];
+    var groupedByMonth = groupTransactionsByMonth(transactions);
+
+    var summaryElement = document.getElementById('summary-text');
+    summaryElement.innerHTML = '';
+
+    var totalSaldoMensual = 0;
+    var totalSaldoMensualEfectivo = 0;
+    var totalSaldoMensualTarjeta = 0;
+
+    groupedByMonth.forEach(function (month) {
+        var totalIngresos = 0;
+        var totalIngresosEfectivo = 0;
+        var totalIngresosTarjeta = 0;
+
+        var totalEgresos = 0;
+        var totalEgresosEfectivo = 0;
+        var totalEgresosTarjeta = 0;
+
+        month.forEach(function (transaction) {
+            if (transaction.type === 'Ingreso') {
+                totalIngresos += transaction.amount;
+                if (transaction.paymentMethod === 'Efectivo') {
+                    totalIngresosEfectivo += transaction.amount;
+                } else if (transaction.paymentMethod === 'Tarjeta') {
+                    totalIngresosTarjeta += transaction.amount;
+                }
+            } else if (transaction.type === 'Egreso') {
+                totalEgresos += transaction.amount;
+                if (transaction.paymentMethod === 'Efectivo') {
+                    totalEgresosEfectivo += transaction.amount;
+                } else if (transaction.paymentMethod === 'Tarjeta') {
+                    totalEgresosTarjeta += transaction.amount;
+                }
+            }
+        });
+
+        var saldoMensual = totalIngresos - totalEgresos;
+        var saldoMensualEfectivo = totalIngresosEfectivo - totalEgresosEfectivo;
+        var saldoMensualTarjeta = totalIngresosTarjeta - totalEgresosTarjeta;
+
+        totalSaldoMensual += saldoMensual;
+        totalSaldoMensualEfectivo += saldoMensualEfectivo;
+        totalSaldoMensualTarjeta += saldoMensualTarjeta;
+
+        // Obtener el método de pago de la primera transacción del mes (se asume que todas las transacciones del mes tienen el mismo método de pago)
+        var metodoPago = month.length > 0 ? month[0].paymentMethod : '';
+
+        // Obtener el nombre del mes y el año de la primera transacción del mes
+        var fechaMes = month.length > 0 ? formatDateMonthName(month[0].date) : '';
+
+        summaryElement.innerHTML += `<tr>
+                                        <td>${fechaMes}</td>
+                                        <td>${formatNumber(totalIngresos)}</td>
+                                        <td>${formatNumber(totalIngresosEfectivo)}</td>
+                                        <td>${formatNumber(totalIngresosTarjeta)}</td>
+                                        <td>${formatNumber(totalEgresos)}</td>
+                                        <td>${formatNumber(totalEgresosEfectivo)}</td>
+                                        <td>${formatNumber(totalEgresosTarjeta)}</td>
+                                        <td>${formatNumber(saldoMensualEfectivo)}</td>
+                                        <td>${formatNumber(saldoMensualTarjeta)}</td>
+                                        <td>${formatNumber(saldoMensual)}</td>
+                                    </tr>`;
+    });
+
+    summaryElement.innerHTML += `<tr class="total-row">
+                                    <td>Total</td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td>${formatNumber(totalSaldoMensualEfectivo)}</td>
+                                    <td>${formatNumber(totalSaldoMensualTarjeta)}</td>
+                                    <td>${formatNumber(totalSaldoMensual)}</td>
+                                </tr>`;
+}
+// Nueva función para formatear la fecha con nombre del mes
+function formatDateMonthName(dateString) {
+    var options = { year: 'numeric', month: 'long' };
+    return new Date(dateString).toLocaleDateString('es-CO', options);
+}
+
+        function groupTransactionsByMonth(transactions) {
+            var grouped = {};
+            transactions.forEach(function (transaction) {
+                var month = transaction.date.split('-').slice(0, 2).join('-');
+                if (!grouped[month]) {
+                    grouped[month] = [];
+                }
+                grouped[month].push(transaction);
+            });
+            return Object.values(grouped);
+        }
+
+        function clearData() {
+            localStorage.removeItem('transactions');
+            displayTransactions();
+            displaySummary();
+        }
+
+        function formatNumber(number) {
+            // Redondear a cero decimales y aplicar el formato con separador de miles
+            return new Intl.NumberFormat('es-CO').format(Math.round(number));
+        }
+
+        // Mostrar las transacciones y el resumen al cargar la página
+        displayTransactions();
+        displaySummary();
+    </script>
+
+</body>
+</html>
+<!-- ... (previous code) ... -->
+
+<script>
+    // ... (previous functions) ...
+
+    function deleteTransaction(index) {
+        // Ask for confirmation before deleting
+        var isConfirmed = confirm("¿Está seguro de que desea eliminar esta transacción?");
+        if (!isConfirmed) {
+            return;
+        }
+
+        var transactions = JSON.parse(localStorage.getItem('transactions')) || [];
+
+        // Eliminar la transacción
+        transactions.splice(index, 1);
+        localStorage.setItem('transactions', JSON.stringify(transactions));
+
+        // Mostrar las transacciones actualizadas y el balance
+        displayTransactions();
+        displaySummary();
+    }
+
+    // ... (remaining code) ...
+</script>
+
+<!-- ... (remaining HTML) ... -->
+<!-- ... (previous code) ... -->
+
+<script>
+    // ... (previous functions) ...
+
+    function clearData() {
+        // Ask for confirmation before clearing data
+        var isConfirmed = confirm("¿Está seguro de que desea limpiar todos los datos? Esta acción no se puede deshacer.");
+        if (!isConfirmed) {
+            return;
+        }
+
+        localStorage.removeItem('transactions');
+        displayTransactions();
+        displaySummary();
+    }
+
+    // ... (remaining code) ...
+</script>
+
+<!-- ... (remaining HTML) ... -->
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de Finanzas</title>
+    <style>
+        /* Estilos CSS (sin cambios) */
+    </style>
+</head>
+
+<body>
+
+    <h1></h1>
+
+    <div class="form-container">
+        <!-- ... (sin cambios) ... -->
+    </div>
+
+    <div class="form-container">
+        <!-- ... (sin cambios) ... -->
+    </div>
+
+    <div id="transactions">
+        <!-- ... (sin cambios) ... -->
+    </div>
+
+    <div class="summary" id="summary">
+        <!-- ... (sin cambios) ... -->
+    </div>
+
+    <script>
+        function showFloatingForm(type) {
+            var formId = type.toLowerCase() + 'Form';
+            document.getElementById(formId).style.display = 'block';
+        }
+
+        function hideFloatingForm(type) {
+            var formId = type.toLowerCase() + 'Form';
+            document.getElementById(formId).style.display = 'none';
+        }
+
+        function saveTransaction(type) {
+    var detailField = document.getElementById('detail' + type);
+    var amountField = document.getElementById('amount' + type);
+    var dateField = document.getElementById('date' + type);
+    var observationField = document.getElementById('observation' + type);
+    var paymentMethodField = document.getElementById('paymentMethod' + type);
+
+    var detail = detailField.value;
+    var amount = parseFloat(amountField.value);
+    var date = dateField.value;
+    var observation = observationField.value;
+    var paymentMethod = paymentMethodField.value;
+
+    if (isNaN(amount) || date === "") {
+        alert("Por favor, ingrese montos y fechas válidos.");
+        return;
+    }
+
+    // Convertir la fecha seleccionada a formato ISO sin indicar zona horaria (local)
+    var isoDate = new Date(date + 'T00:00:00').toISOString();
+
+    var transaction = {
+        type: type,
+        detail: detail,
+        amount: amount,
+        date: isoDate,
+        observation: observation,
+        paymentMethod: paymentMethod
+    };
+
+    var transactions = JSON.parse(localStorage.getItem('transactions')) || [];
+    transactions.push(transaction);
+
+    // Ordenar transacciones por fecha en orden descendente
+    transactions = sortTransactions(transactions);
+
+    localStorage.setItem('transactions', JSON.stringify(transactions));
+
+    // Limpiar campos y ocultar el formulario
+    detailField.value = '';
+    amountField.value = '';
+    dateField.value = '';
+    observationField.value = '';
+    paymentMethodField.value = '';
+    hideFloatingForm(type);
+
+    // Mostrar las transacciones actualizadas y el balance
+    displayTransactions();
+    displaySummary();
+}
+
+        function displayTransactions() {
+            // ... (sin cambios) ...
+        }
+
+        function sortTransactions(transactions) {
+            // Ordenar transacciones por fecha en orden descendente
+            return transactions.sort((a, b) => new Date(b.date) - new Date(a.date));
+        }
+
+        function deleteTransaction(index) {
+            // Ask for confirmation before deleting
+            var isConfirmed = confirm("¿Está seguro de que desea eliminar esta transacción?");
+            if (!isConfirmed) {
+                return;
+            }
+
+            var transactions = JSON.parse(localStorage.getItem('transactions')) || [];
+
+            // Eliminar la transacción
+            transactions.splice(index, 1);
+            localStorage.setItem('transactions', JSON.stringify(transactions));
+
+            // Mostrar las transacciones actualizadas y el balance
+            displayTransactions();
+            displaySummary();
+        }
+
+        // ... (código posterior)
+
+    </script>
+
+</body>
+</html>
+<!-- ... (código anterior) ... -->
+
+<script>
+    function showFloatingForm(type) {
+        var formId = type.toLowerCase() + 'Form';
+        document.getElementById(formId).style.display = 'block';
+    }
+
+    function hideFloatingForm(type) {
+        var formId = type.toLowerCase() + 'Form';
+        document.getElementById(formId).style.display = 'none';
+    }
+
+    function saveTransaction(type) {
+    var detailField = document.getElementById('detail' + type);
+    var amountField = document.getElementById('amount' + type);
+    var dateField = document.getElementById('date' + type);
+    var observationField = document.getElementById('observation' + type);
+    var paymentMethodField = document.getElementById('paymentMethod' + type);
+
+    var detail = detailField.value;
+    var amount = parseFloat(amountField.value);
+    var date = dateField.value;
+    var observation = observationField.value;
+    var paymentMethod = paymentMethodField.value;
+
+    if (isNaN(amount) || date === "") {
+        alert("Por favor, ingrese montos y fechas válidos.");
+        return;
+    }
+
+    // Convertir la fecha seleccionada a formato ISO sin indicar zona horaria (local)
+    var isoDate = new Date(date + 'T00:00:00').toISOString();
+
+    var transaction = {
+        type: type,
+        detail: detail,
+        amount: amount,
+        date: isoDate,
+        observation: observation,
+        paymentMethod: paymentMethod
+    };
+
+    var transactions = JSON.parse(localStorage.getItem('transactions')) || [];
+    transactions.push(transaction);
+
+    // Ordenar transacciones por fecha en orden descendente
+    transactions = sortTransactions(transactions);
+
+    localStorage.setItem('transactions', JSON.stringify(transactions));
+
+    // Limpiar campos y ocultar el formulario
+    detailField.value = '';
+    amountField.value = '';
+    dateField.value = '';
+    observationField.value = '';
+    paymentMethodField.value = '';
+    hideFloatingForm(type);
+
+    // Mostrar las transacciones actualizadas y el balance
+    displayTransactions();
+    displaySummary();
+}
+
+    function displayTransactions() {
+        // ... (sin cambios) ...
+    }
+
+    function sortTransactions(transactions) {
+        // Ordenar transacciones por fecha en orden descendente
+        return transactions.sort((a, b) => new Date(b.date) - new Date(a.date));
+    }
+
+    function deleteTransaction(index) {
+        // ... (sin cambios) ...
+    }
+
+    // ... (código posterior)
+
+</script>
+
+<!-- ... (código posterior) ... -->
+
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+    <style>
+        /* Estilos CSS (sin cambios) */
+    </style>
+</head>
+
+<body>
+
+    <h1></h1>
+
+    <div class="form-container">
+        <!-- ... (sin cambios) ... -->
+    </div>
+
+    <div class="form-container">
+        <!-- ... (sin cambios) ... -->
+    </div>
+
+    <div id="transactions">
+        <!-- ... (sin cambios) ... -->
+    </div>
+
+    <div class="summary" id="summary">
+        <!-- ... (sin cambios) ... -->
+    </div>
+
+    <script>
+        function showFloatingForm(type) {
+            var formId = type.toLowerCase() + 'Form';
+            document.getElementById(formId).style.display = 'block';
+        }
+
+        function hideFloatingForm(type) {
+            var formId = type.toLowerCase() + 'Form';
+            document.getElementById(formId).style.display = 'none';
+        }
+
+    function saveTransaction(type) {
+    var detailField = document.getElementById('detail' + type);
+    var amountField = document.getElementById('amount' + type);
+    var dateField = document.getElementById('date' + type);
+    var observationField = document.getElementById('observation' + type);
+    var paymentMethodField = document.getElementById('paymentMethod' + type);
+
+    var detail = detailField.value;
+    var amount = parseFloat(amountField.value);
+    var date = dateField.value;
+    var observation = observationField.value;
+    var paymentMethod = paymentMethodField.value;
+
+    if (isNaN(amount) || date === "") {
+        alert("Por favor, ingrese montos y fechas válidos.");
+        return;
+    }
+
+    // Convertir la fecha seleccionada a formato ISO sin indicar zona horaria (local)
+    var isoDate = new Date(date + 'T00:00:00').toISOString();
+
+    var transaction = {
+        type: type,
+        detail: detail,
+        amount: amount,
+        date: isoDate,
+        observation: observation,
+        paymentMethod: paymentMethod
+    };
+
+    var transactions = JSON.parse(localStorage.getItem('transactions')) || [];
+    transactions.push(transaction);
+
+    // Ordenar transacciones por fecha en orden descendente
+    transactions = sortTransactions(transactions);
+
+    localStorage.setItem('transactions', JSON.stringify(transactions));
+
+    // Limpiar campos y ocultar el formulario
+    detailField.value = '';
+    amountField.value = '';
+    dateField.value = '';
+    observationField.value = '';
+    paymentMethodField.value = '';
+    hideFloatingForm(type);
+
+    // Mostrar las transacciones actualizadas y el balance
+    displayTransactions();
+    displaySummary();
+}
+
+        function displayTransactions() {
+            // ... (sin cambios) ...
+        }
+
+        function sortTransactions(transactions) {
+            // Ordenar transacciones por fecha en orden descendente
+            return transactions.sort((a, b) => new Date(b.date) - new Date(a.date));
+        }
+
+        function deleteTransaction(index) {
+            // Ask for confirmation before deleting
+            var isConfirmed = confirm("¿Está seguro de que desea eliminar esta transacción?");
+            if (!isConfirmed) {
+                return;
+            }
+
+            var transactions = JSON.parse(localStorage.getItem('transactions')) || [];
+
+            // Eliminar la transacción
+            transactions.splice(index, 1);
+            localStorage.setItem('transactions', JSON.stringify(transactions));
+
+            // Mostrar las transacciones actualizadas y el balance
+            displayTransactions();
+            displaySummary();
+        }
+
+        function clearData() {
+            // Ask for confirmation before clearing data
+            var isConfirmed = confirm("¿Está seguro de que desea limpiar todos los datos? Esta acción no se puede deshacer.");
+            if (!isConfirmed) {
+                return;
+            }
+
+            localStorage.removeItem('transactions');
+            displayTransactions();
+            displaySummary();
+        }
+
+            function formatDate(dateString) {
+            var options = { year: 'numeric', month: 'long', day: 'numeric' };
+            return new Date(dateString).toLocaleDateString('es-CO', options);
+        }
+
+        function editTransaction(index, type) {
+            var transactions = JSON.parse(localStorage.getItem('transactions')) || [];
+            var transactionToEdit = transactions[index];
+
+            // Rellenar el formulario de edición con los detalles actuales
+            document.getElementById('detail' + type).value = transactionToEdit.detail;
+document.getElementById('amount' + type).value = transactionToEdit.amount;
+document.getElementById('date' + type).value = transactionToEdit.date;
+document.getElementById('observation' + type).value = transactionToEdit.observation;
+document.getElementById('paymentMethod' + type).value = transactionToEdit.paymentMethod;
+
+
+            // Mostrar el formulario de edición
+            showFloatingForm(type);
+
+            // Eliminar la transacción original
+            transactions.splice(index, 1);
+            localStorage.setItem('transactions', JSON.stringify(transactions));
+
+            // Mostrar las transacciones actualizadas y el balance
+            displayTransactions();
+            displaySummary();
+        }
+
+        function displaySummary() {
+            // ... (sin cambios) ...
+        }
+
+        function groupTransactionsByMonth(transactions) {
+            // ... (sin cambios) ...
+        }
+
+        function formatNumber(number) {
+            // ... (sin cambios) ...
+        }
+
+        // Mostrar las transacciones y el resumen al cargar la página
+        displayTransactions();
+        displaySummary();
+    </script>
+
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de Finanzas</title>
+    <style>
+        /* Estilos CSS (sin cambios) */
+    </style>
+</head>
+
+<body>
+
+    <h1></h1>
+
+    <div class="form-container">
+        <!-- ... (sin cambios) ... -->
+    </div>
+
+    <div class="form-container">
+        <!-- ... (sin cambios) ... -->
+    </div>
+
+    <div id="transactions">
+        <!-- ... (sin cambios) ... -->
+    </div>
+
+    <button onclick="toggleFilteredSummary()">Mostrar Resumen</button>
+
+    <div id="filteredSummary" style="display: none;">
+        <h2>Resumen Filtrado</h2>
+        <label for="searchInput">Filtrar por Detalle:</label>
+        <input type="text" id="searchInput" oninput="updateFilteredSummary()">
+
+        <label for="monthSelector">Seleccionar Mes:</label>
+        <select id="monthSelector" onchange="updateFilteredSummary()">
+            <option value="">Todos los Meses</option>
+            <option value="01">Enero</option>
+            <option value="02">Febrero</option>
+            <option value="03">Marzo</option>
+            <option value="04">Abril</option>
+            <option value="05">Mayo</option>
+            <option value="06">Junio</option>
+            <option value="07">Julio</option>
+            <option value="08">Agosto</option>
+            <option value="09">Septiembre</option>
+            <option value="10">Octubre</option>
+            <option value="11">Noviembre</option>
+            <option value="12">Diciembre</option>
+            <!-- Agrega opciones para cada mes según tus necesidades -->
+        </select>
+
+        <table class="transactions-table">
+            <thead>
+                <tr>
+                    <th>Detalle</th>
+                    <th>Total Gasto Mensual</th>
+                </tr>
+            </thead>
+            <tbody id="filteredSummaryText"></tbody>
+        </table>
+    </div>
+
+    <script>
+        function toggleFilteredSummary() {
+            var filteredSummaryElement = document.getElementById('filteredSummary');
+            var isDisplayed = filteredSummaryElement.style.display === 'block';
+
+            if (isDisplayed) {
+                // Ocultar el resumen filtrado al hacer clic en el botón nuevamente
+                filteredSummaryElement.style.display = 'none';
+            } else {
+                // Mostrar el resumen filtrado y actualizar al mostrarlo
+                filteredSummaryElement.style.display = 'block';
+                updateFilteredSummary();
+            }
+        }
+
+        function updateFilteredSummary() {
+            var searchQuery = document.getElementById('searchInput').value.toLowerCase();
+            var selectedMonth = document.getElementById('monthSelector').value;
+
+            var transactions = JSON.parse(localStorage.getItem('transactions')) || [];
+            var filteredTransactions = transactions.filter(function (transaction) {
+                var transactionMonth = transaction.date.split('-')[1]; // Obtener el mes de la fecha
+
+                var isTransactionInSelectedMonth = selectedMonth ? transactionMonth === selectedMonth : true;
+                return (
+                    (transaction.type === 'Egreso') &&
+                    (transaction.detail.toLowerCase().includes(searchQuery) || searchQuery === '') &&
+                    isTransactionInSelectedMonth
+                );
+            });
+
+            displayFilteredSummary(filteredTransactions);
+        }
+
+        function displayFilteredSummary(filteredTransactions) {
+            var filteredSummaryElement = document.getElementById('filteredSummaryText');
+            filteredSummaryElement.innerHTML = '';
+
+            // Calcular el total de los montos filtrados
+            var totalAmount = filteredTransactions.reduce(function (sum, transaction) {
+                return sum + transaction.amount;
+            }, 0);
+
+            // Mostrar resumen filtrado
+            filteredSummaryElement.innerHTML = `<tr>
+                                                <td>Total</td>
+                                                <td>${formatNumber(totalAmount)}</td>
+                                            </tr>`;
+        }
+
+        function formatNumber(number) {
+            // Redondear a dos decimales y aplicar el formato con separador de miles
+            return new Intl.NumberFormat('es-CO', { minimumFractionDigits: 0, maximumFractionDigits: 2 }).format(number);
+        }
+
+        // Resto del código (sin cambios)
+    </script>
+
+</body>
+
+</html>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de Finanzas Personales</title>
+    <!-- Asegúrate de incluir jQuery y la biblioteca DataTables -->
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
+    <style>
+        .dataTables_scrollBody thead {
+            visibility: visible;
+            position: relative;
+        }
+
+        .dataTables_scrollBody tbody {
+            overflow-y: scroll;
+            max-height: 300px; /* Ajusta según sea necesario */
+        }
+
+        /* Estilo para los títulos de las tablas */
+        .transactions-table th {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+            font-weight: bold; /* Negrita */
+            background-color: #2ecc71; /* Color de fondo para todos los títulos */
+        }
+      
+    </style>
+</head>
+<body>
+
+    <!-- ... (código anterior) ... -->
+
+    <div id="transactions">
+        <div id="ingresos" class="transaction-type">
+            <table class="transactions-table" id="ingresosTable">
+                <!-- ... (estructura de la tabla) ... -->
+            </table>
+        </div>
+
+        <div id="egresos" class="transaction-type">
+            <table class="transactions-table" id="egresosTable">
+                <!-- ... (estructura de la tabla) ... -->
+            </table>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            // Configuración del idioma para cambiar "Search" por "Buscar" y "Showing x to y of z entries"
+            var idioma_espanol = {
+                "sSearch": "Buscar",
+                "oPaginate": {
+                    "sFirst": "Primero",
+                    "sLast": "Último",
+                    "sNext": "Siguiente",
+                    "sPrevious": "Anterior"
+                },
+                "sInfo": "Mostrando _START_ a _END_ de _TOTAL_ entradas", // Cambia este texto
+                "sInfoEmpty": "Mostrando 0 a 0 de 0 entradas",
+                "sInfoFiltered": "(filtrado de _MAX_ entradas en total)",
+                "sZeroRecords": "No se encontraron registros coincidentes",
+                // ... (otras configuraciones de idioma si las necesitas)
+            };
+
+            // Inicializar DataTables para las tablas de ingresos y egresos
+            $('#ingresosTable').DataTable({
+                scrollY: '300px', // Ajusta según sea necesario
+                scrollCollapse: true,
+                paging: false,
+                fixedColumns: {
+                    leftColumns: 1
+                },
+                language: idioma_espanol  // Aplicar configuración de idioma
+            });
+
+            $('#egresosTable').DataTable({
+                scrollY: '300px', // Ajusta según sea necesario
+                scrollCollapse: true,
+                paging: false,
+                fixedColumns: {
+                    leftColumns: 1
+                },
+                language: idioma_espanol  // Aplicar configuración de idioma
+            });
+        });
+    </script>
+
+    <!-- ... (código posterior) ... -->
+
+</body>
+</html>
+
